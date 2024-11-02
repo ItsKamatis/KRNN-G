@@ -1,0 +1,31 @@
+# Core dependencies
+torch
+numpy
+pandas
+scikit-learn
+
+# Data processing
+TA-Lib
+pyarrow # For parquet files
+
+# Experiment tracking
+mlflow
+PyYAML
+
+# Visualization
+matplotlib
+seaborn
+
+# Testing
+pytest
+pytest-cov
+
+# Development tools
+black
+isort
+flake8
+mypy
+
+# Utilities
+tqdm
+joblib

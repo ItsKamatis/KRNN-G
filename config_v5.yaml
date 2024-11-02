@@ -1,0 +1,59 @@
+# KRNN Rev. 5 Configuration
+
+# Model architecture
+model:
+  input_dim: 10              # Number of features
+  hidden_dim: 128            # RNN hidden dimension
+  num_layers: 2              # Number of RNN layers
+  dropout: 0.2              # Dropout rate
+  bidirectional: true       # Use bidirectional RNN
+
+# Data processing
+data:
+  window_size: 10           # Lookback window
+  batch_size: 64           # Training batch size
+  features:                # Technical indicators to use
+    - RSI
+    - MACD
+    - BB_UPPER
+    - BB_LOWER
+    - ATR
+  target_columns:          # Price data columns
+    - Open
+    - High
+    - Low
+    - Close
+    - Volume
+
+# Experiment tracking
+experiment:
+  name: "krnn_v5"
+  tracking_uri: "./mlruns"
+  artifact_dir: "./data/checkpoints"
+  memory_threshold: 0.85    # Memory usage threshold
+  gpu_threshold: 0.85      # GPU memory threshold
+  checkpoint_freq: 5       # Save every N epochs
+
+# Training parameters
+training:
+  epochs: 50
+  learning_rate: 0.001
+  early_stop_patience: 10
+  gradient_clip: 1.0
+  optimizer: "adam"
+  scheduler:              # Learning rate scheduler
+    type: "reduce_on_plateau"
+    patience: 5
+    factor: 0.5
+
+# Paths
+paths:
+  data: "./data"
+  checkpoints: "./data/checkpoints"
+  logs: "./logs"
+
+# Hardware
+hardware:
+  gpu: 0                  # -1 for CPU, >=0 for specific GPU
+  num_workers: 4          # DataLoader workers
+  pin_memory: true       # Pin memory for GPU training
