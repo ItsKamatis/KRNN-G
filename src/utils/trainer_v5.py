@@ -6,8 +6,8 @@ from typing import Dict, Optional, Tuple
 from dataclasses import dataclass
 from tqdm import tqdm
 
-from .krnn_v5 import KRNN, ModelConfig
-from .experiment_v5 import ExperimentManager, MemoryOptimizer
+from src.model.krnn_v5 import KRNN, ModelConfig
+from src.utils.experiment_v5 import ExperimentManager, MemoryOptimizer
 
 logger = logging.getLogger(__name__)
 

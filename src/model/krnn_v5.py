@@ -1,7 +1,9 @@
+# src/model/krnn_v5.py
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Tuple, Optional
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from typing import Tuple
 from dataclasses import dataclass
 
 
@@ -61,15 +63,7 @@ class KRNN(nn.Module):
                 nn.init.zeros_(param)
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Forward pass with attention mechanism.
-
-        Args:
-            x: Input tensor of shape (batch_size, seq_len, feature_dim)
-
-        Returns:
-            tuple: (predictions, attention_weights)
-        """
+        """Forward pass with attention mechanism."""
         # Project features
         x = self.feature_proj(x)
         x = F.relu(x)
@@ -80,7 +74,7 @@ class KRNN(nn.Module):
         # Self-attention
         attention = F.softmax(
             torch.bmm(rnn_out, rnn_out.transpose(1, 2)) /
-            torch.sqrt(torch.tensor(self.rnn_hidden, dtype=torch.float32)),
+            torch.sqrt(torch.tensor(self.rnn_hidden, dtype=torch.float32, device=x.device)),
             dim=2
         )
 
@@ -112,38 +106,76 @@ class KRNNPredictor:
             lr=model.config.learning_rate,
             weight_decay=0.01
         )
-        self.scheduler = torch.optim.ReduceLROnPlateau(
-            self.optimizer, mode='min', factor=0.5, patience=5
+        self.scheduler = ReduceLROnPlateau(
+            self.optimizer,
+            mode='min',
+            factor=0.5,
+            patience=5
+            # Removed verbose=True to address deprecation warning
         )
         self.criterion = nn.CrossEntropyLoss()
 
-    def train_step(self,
-                   features: torch.Tensor,
-                   targets: torch.Tensor) -> Tuple[float, torch.Tensor]:
-        """Single training step."""
+    def train_epoch(self, train_loader) -> dict:
+        """Train for one epoch."""
         self.model.train()
-        self.optimizer.zero_grad()
+        total_loss = 0
+        correct = 0
+        total = 0
 
-        # Forward pass
-        logits, _ = self.model(features)
-        loss = self.criterion(logits, targets)
+        for batch_idx, (features, targets) in enumerate(train_loader):
+            features = features.to(self.model.config.device)
+            targets = targets.to(self.model.config.device).squeeze(1)  # Squeeze target tensor
 
-        # Backward pass
-        loss.backward()
+            # Forward pass
+            self.optimizer.zero_grad()
+            logits, _ = self.model(features)
+            loss = self.criterion(logits, targets)
 
-        # Gradient clipping
-        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+            # Backward pass
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+            self.optimizer.step()
 
-        self.optimizer.step()
-        return loss.item(), logits
+            # Track metrics
+            total_loss += loss.item()
+            _, predicted = torch.max(logits, 1)
+            total += targets.size(0)
+            correct += (predicted == targets).sum().item()
+
+        return {
+            'loss': total_loss / len(train_loader),
+            'accuracy': correct / total
+        }
 
     @torch.no_grad()
-    def validate(self, features: torch.Tensor, targets: torch.Tensor) -> Tuple[float, torch.Tensor]:
-        """Validation step."""
+    def validate(self, val_loader) -> dict:
+        """Run validation."""
         self.model.eval()
-        logits, _ = self.model(features)
-        loss = self.criterion(logits, targets)
-        return loss.item(), logits
+        total_loss = 0
+        correct = 0
+        total = 0
+
+        for batch_idx, (features, targets) in enumerate(val_loader):
+            features = features.to(self.model.config.device)
+            targets = targets.to(self.model.config.device).squeeze(1)  # Squeeze target tensor
+
+            # Forward pass
+            logits, _ = self.model(features)
+            loss = self.criterion(logits, targets)
+
+            # Track metrics
+            total_loss += loss.item()
+            _, predicted = torch.max(logits, 1)
+            total += targets.size(0)
+            correct += (predicted == targets).sum().item()
+
+        metrics = {
+            'loss': total_loss / len(val_loader),
+            'accuracy': correct / total
+        }
+
+        self.scheduler.step(metrics['loss'])
+        return metrics
 
     def save_checkpoint(self, path: str) -> None:
         """Save model checkpoint."""

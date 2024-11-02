@@ -2,28 +2,40 @@
 
 # Model architecture
 model:
-  input_dim: 10              # Number of features
+  input_dim: 10              # Number of features (ensure this reflects the derived features only)
   hidden_dim: 128            # RNN hidden dimension
   num_layers: 2              # Number of RNN layers
-  dropout: 0.2              # Dropout rate
-  bidirectional: true       # Use bidirectional RNN
+  dropout: 0.2               # Dropout rate
+  bidirectional: true        # Use bidirectional RNN
+
+# MLflow configuration
+mlflow:
+  tracking_uri: "mlruns"             # Local filesystem tracking
+  experiment_name: "krnn_v5_local"   # Experiment name
+  model_name: "krnn_stock_predictor" # Model name in MLflow
+  artifact_store: "artifacts"        # Directory to store artifacts
+  tags:
+    project: "stock_prediction"
+    version: "5.0"
 
 # Data processing
 data:
   window_size: 10           # Lookback window
-  batch_size: 64           # Training batch size
-  features:                # Technical indicators to use
+  batch_size: 64            # Training batch size
+  features:                 # Technical indicators to use (exclude 'Volume')
     - RSI
     - MACD
     - BB_UPPER
     - BB_LOWER
     - ATR
-  target_columns:          # Price data columns
+    - Volume_MA_5        # Example derived feature: 5-day Moving Average of Volume
+    - Volume_Change      # Example derived feature: Volume Change Percentage
+  target_columns:          # Price data columns (exclude 'Volume' if not needed as target)
     - Open
     - High
     - Low
     - Close
-    - Volume
+    # - Volume              # Removed if 'Volume' is not a target; include if necessary
 
 # Experiment tracking
 experiment:
@@ -31,8 +43,8 @@ experiment:
   tracking_uri: "./mlruns"
   artifact_dir: "./data/checkpoints"
   memory_threshold: 0.85    # Memory usage threshold
-  gpu_threshold: 0.85      # GPU memory threshold
-  checkpoint_freq: 5       # Save every N epochs
+  gpu_threshold: 0.85        # GPU memory threshold
+  checkpoint_freq: 5         # Save every N epochs
 
 # Training parameters
 training:
@@ -56,4 +68,23 @@ paths:
 hardware:
   gpu: 0                  # -1 for CPU, >=0 for specific GPU
   num_workers: 4          # DataLoader workers
-  pin_memory: true       # Pin memory for GPU training
+  pin_memory: true        # Pin memory for GPU training
+
+# Additional Sections (Optional)
+
+# Feature Engineering Configuration
+feature_engineering:
+  volume_features:
+    - moving_average: 5   # 5-day moving average
+    - percentage_change: true  # Calculate percentage change
+  # Add more derived features as needed
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s [%(levelname)s] %(message)s"
+  log_dir: "logs"
+
+# Environment settings
+environment: "development"
+debug: true

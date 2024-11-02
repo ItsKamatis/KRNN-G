@@ -1,3 +1,4 @@
+# src/utils/experiment_v5.py
 import os
 import mlflow
 import logging
@@ -31,7 +32,7 @@ class ExperimentManager:
         mlflow.set_tracking_uri(self.config['mlflow']['tracking_uri'])
         mlflow.set_experiment(self.config['mlflow']['experiment_name'])
 
-    def __enter__(self) -> ExperimentContext:
+    def __enter__(self) -> 'ExperimentContext':
         """Start experiment tracking."""
         # Start MLflow run
         run = mlflow.start_run()
@@ -75,11 +76,12 @@ class ExperimentManager:
                 'git_commit': git_commit,
                 'git_branch': git_branch
             })
-        except:
-            logger.warning("Unable to log git information")
+        except Exception as e:
+            logger.warning(f"Unable to log git information: {e}")
 
         # Log start time
-        mlflow.log_param('start_time', self.context.start_time.isoformat())
+        if self.context:
+            mlflow.log_param('start_time', self.context.start_time.isoformat())
 
     def _flatten_dict(self, d: Dict, parent_key: str = '') -> Dict[str, str]:
         """Flatten nested dictionary for MLflow logging."""
@@ -91,6 +93,40 @@ class ExperimentManager:
             else:
                 items.append((new_key, str(v)))
         return dict(items)
+
+    def log_metrics(self, metrics: Dict[str, float], step: Optional[int] = None) -> None:
+        """
+        Log a dictionary of metrics to MLflow.
+
+        Args:
+            metrics (Dict[str, float]): A dictionary where keys are metric names and values are metric values.
+            step (Optional[int]): An optional step value to record with the metrics.
+        """
+        for key, value in metrics.items():
+            mlflow.log_metric(key, value, step=step)
+        logger.debug(f"Logged metrics: {metrics} at step: {step}")
+
+    def log_param(self, key: str, value: Any) -> None:
+        """
+        Log a single parameter to MLflow.
+
+        Args:
+            key (str): Parameter name.
+            value (Any): Parameter value.
+        """
+        mlflow.log_param(key, value)
+        logger.debug(f"Logged param: {key} = {value}")
+
+    def log_artifact(self, local_path: str, artifact_path: Optional[str] = None) -> None:
+        """
+        Log an artifact (file or directory) to MLflow.
+
+        Args:
+            local_path (str): Path to the local file or directory.
+            artifact_path (Optional[str]): The run-relative artifact path.
+        """
+        mlflow.log_artifact(local_path, artifact_path)
+        logger.debug(f"Logged artifact: {local_path} to path: {artifact_path}")
 
 
 # Memory optimization context manager

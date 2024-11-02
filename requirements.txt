@@ -6,6 +6,7 @@ scikit-learn
 
 # Data processing
 TA-Lib
+yfinance
 pyarrow # For parquet files
 
 # Experiment tracking

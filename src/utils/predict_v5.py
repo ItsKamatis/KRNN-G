@@ -3,7 +3,7 @@ import torch
 import pandas as pd
 import logging
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 import yaml
 
 from src.model.krnn_v5 import KRNN, ModelConfig
