@@ -94,10 +94,16 @@ class DataCollector:
             df['BB_UPPER'] = bb_upper
             df['BB_LOWER'] = bb_lower
 
-            # Add labels (1: Up, 2: Stable, 3: Down)
-            returns = df['Close'].pct_change()
-            df['Label'] = pd.qcut(returns, q=3, labels=[1, 2, 3]).fillna(2)
+            # --- THE FIX: TARGET GENERATION ---
+            # 1. Calculate Log Returns (Next Day)
+            # Formula: ln(P_t / P_{t-1})
+            # We shift(-1) because we want to predict tomorrow's return using today's data
+            df['Log_Return'] = np.log(df['Close'] / df['Close'].shift(1))
 
+            # The 'Target' is the Next Day's Return
+            df['Target'] = df['Log_Return'].shift(-1)
+
+            # Drop NaNs created by shifting and indicators
             return df.dropna()
 
         except Exception as e:

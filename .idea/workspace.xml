@@ -5,17 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="initial commit">
-      <change afterPath="$PROJECT_DIR$/src/data/data_collector_v5.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train_local_v5.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main_pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/portfolio/optimizer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/risk/evt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/KRNN_V5.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KRNN_V5.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config_v5.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config_v5.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/dataset_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/dataset_v5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_collector_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_collector_v5.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/krnn_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/krnn_v5.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/experiment_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/experiment_v5.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/predict_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/predict_v5.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/trainer_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/trainer_v5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/train_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/train_v5.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,36 +36,41 @@
     &quot;assignee&quot;: &quot;ItsKamatis&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/ItsKamatis/KRNN_V5.git&quot;,
-    &quot;accountId&quot;: &quot;2ee01cde-fc11-4943-8b7b-e4d151a28042&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/ItsKamatis/KRNN_V5.git",
+    "accountId": "36c0120a-5724-4140-8e17-9de1d6fcb06a"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2oJ89tBQOW1MFAIcfJVieKbPoRy" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Program Files/Python/python.exe&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main_pipeline.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "D:/Program Files/Python/python.exe",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PyCharm Projects\KRNN_V5" />
@@ -76,8 +79,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23726.102" />
-        <option value="bundled-python-sdk-5e1850174b45-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23726.102" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-PY-252.28238.29" />
+        <option value="bundled-python-sdk-a101402ee41c-968fe969f28a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.28238.29" />
       </set>
     </attachedChunks>
   </component>
@@ -91,6 +94,7 @@
       <updated>1730576169599</updated>
       <workItem from="1730576171275" duration="848000" />
       <workItem from="1730577034925" duration="6532000" />
+      <workItem from="1766018570811" duration="2065000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -117,5 +121,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <option name="LAST_COMMIT_MESSAGE" value="initial commit" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/model/train_v5.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
