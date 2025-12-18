@@ -11,7 +11,7 @@ from pathlib import Path
 from src.data.data_collector_v5 import DataCollector
 from src.data.dataset_v5 import DataModule, DataConfig
 from src.model.krnn_v5 import KRNNRegressor, ModelConfig
-from src.model.train_v5 import Trainer
+from src.utils.trainer_v5 import Trainer
 from src.risk.evt import calculate_portfolio_risk, get_residuals
 from src.portfolio.optimizer import MeanCVaROptimizer
 
