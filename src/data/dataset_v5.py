@@ -1,6 +1,7 @@
 # src/data/dataset_v5.py
 import torch
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from typing import Dict, Tuple
 from dataclasses import dataclass
@@ -13,75 +14,94 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class DataConfig:
     batch_size: int = 64
-    sequence_length: int = 10  # This matches the argument name in your class
+    sequence_length: int = 10
     train_shuffle: bool = True
-    num_workers: int = 4
+    num_workers: int = 0  # Set to 0 for Windows if you see pickling errors, else 4
     pin_memory: bool = True
 
 
 class StockDataset(Dataset):
     """
-    Memory efficient dataset for stock data.
-    Updated for REGRESSION (Plan B).
+    Optimized Tensor-based Dataset.
+    Pre-processes data into RAM to prevent CPU bottlenecks during training.
     """
 
     def __init__(
             self,
             features: pd.DataFrame,
             sequence_length: int,
-            target_column: str = 'Target'  # Changed default from 'Label' to 'Target'
+            target_column: str = 'Target'
     ):
         self.sequence_length = sequence_length
-        self.target_column = target_column
 
-        # Get feature columns (exclude Date, Ticker, and target)
+        # 1. Identify Feature Columns
         self.feature_cols = [
             col for col in features.columns
             if col not in ['Date', 'Ticker', target_column]
+               and pd.api.types.is_numeric_dtype(features[col])
         ]
 
-        # Ensure we don't accidentally include object columns (like strings)
-        self.feature_cols = [c for c in self.feature_cols if pd.api.types.is_numeric_dtype(features[c])]
+        # 2. Sort to ensure time coherence
+        df_sorted = features.sort_values(by=['Ticker', 'Date']).reset_index(drop=True)
 
-        # Sort data by Ticker and Date
-        features = features.sort_values(by=['Ticker', 'Date']).reset_index(drop=True)
+        # 3. Pre-allocate lists to hold the Tensors
+        # Converting to numpy first is much faster than iterating rows
+        all_feats_list = []
+        all_targets_list = []
 
-        # Initialize data storage
-        self.data = []
+        # Group by Ticker to ensure we don't mix data from different stocks in one window
+        # (This part is still Python-loop heavy but only happens ONCE at startup)
+        grouped = df_sorted.groupby('Ticker')
 
-        # Group data by ticker
-        groups = features.groupby('Ticker')
+        for ticker, group in grouped:
+            # Extract numpy arrays for this ticker
+            group_feats = group[self.feature_cols].values.astype(np.float32)
+            group_targets = group[target_column].values.astype(np.float32)
 
-        # Build sequences
-        for _, group in groups:
-            group_size = len(group)
-            if group_size >= self.sequence_length:
-                # We iterate such that we can get a sequence of length N and the Target at N
-                # The target for sequence [t-N : t] is usually at t (next step prediction)
-                # Assuming 'Target' column is already shifted in DataCollector
-                for i in range(self.sequence_length, group_size + 1):
-                    seq_data = group.iloc[i - self.sequence_length:i]
-                    self.data.append(seq_data)
+            num_samples = len(group)
+            if num_samples <= sequence_length:
+                continue
+
+            # Rolling window view (efficient numpy stride trick or simple loop)
+            # For clarity and safety, we'll use a loop, but append to lists
+            # We want input [t-seq : t] and target [t] (which is already shifted in data_collector)
+
+            # Vectorized sliding window creation is faster:
+            # Create indices:
+            # [[0, 1, ..., 9], [1, 2, ..., 10], ...]
+            # This consumes more RAM but is instant for training.
+
+            for i in range(sequence_length, num_samples + 1):
+                # Input: Window of length 'sequence_length' ending at i
+                # Target: The value at i-1 (since we already shifted target in Collector)
+                # But wait, your DataCollector shifts Target by -1.
+                # So row 'i' in the DF contains Features(t) and Target(t+1).
+                # We want the window to predict the target at the end.
+
+                # Slicing:
+                window_feats = group_feats[i - sequence_length: i]
+                # The target for this sequence is the target associated with the last step
+                target_val = group_targets[i - 1]
+
+                all_feats_list.append(window_feats)
+                all_targets_list.append(target_val)
+
+        # 4. Stack into one massive Tensor (The "RAM Cache")
+        # Shape: [Total_Samples, Seq_Len, Features]
+        if len(all_feats_list) == 0:
+            raise ValueError("Not enough data to create sequences. Check sequence_length vs data size.")
+
+        self.X = torch.from_numpy(np.stack(all_feats_list))
+        self.y = torch.from_numpy(np.array(all_targets_list))
+
+        logger.info(f"Dataset loaded into RAM: X shape {self.X.shape}, y shape {self.y.shape}")
 
     def __len__(self) -> int:
-        return len(self.data)
+        return len(self.X)
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Get sequence of features and target."""
-        seq_data = self.data[idx]
-
-        # Use all rows in the sequence for features
-        feature_sequence = seq_data[self.feature_cols].values
-
-        # The target is the value associated with the LAST step of the window
-        # (Assuming the target column was pre-shifted in data_collector to represent t+1)
-        target = seq_data[self.target_column].values[-1]
-
-        # Return feature sequence and Float tensor for Regression
-        return (
-            torch.FloatTensor(feature_sequence),
-            torch.tensor([target], dtype=torch.float32)  # Float for Regression, No "target-1"
-        )
+        # Zero overhead access
+        return self.X[idx], self.y[idx]
 
 
 class DataModule:
@@ -94,55 +114,27 @@ class DataModule:
         self.test_dataset = None
 
     def setup(self, data_dir: Path) -> None:
-        """Load and prepare datasets."""
-        # Load data splits
         try:
             train_data = pd.read_parquet(data_dir / 'train.parquet')
             val_data = pd.read_parquet(data_dir / 'validation.parquet')
             test_data = pd.read_parquet(data_dir / 'test.parquet')
-        except FileNotFoundError as e:
-            logger.error(f"Data files not found in {data_dir}. Run data collection first.")
-            raise e
+        except FileNotFoundError:
+            raise RuntimeError("Data files not found.")
 
-        # Create datasets
-        self.train_dataset = StockDataset(
-            train_data,
-            self.config.sequence_length
-        )
-        self.val_dataset = StockDataset(
-            val_data,
-            self.config.sequence_length
-        )
-        self.test_dataset = StockDataset(
-            test_data,
-            self.config.sequence_length
-        )
+        self.train_dataset = StockDataset(train_data, self.config.sequence_length)
+        self.val_dataset = StockDataset(val_data, self.config.sequence_length)
+        self.test_dataset = StockDataset(test_data, self.config.sequence_length)
 
     def get_dataloaders(self) -> Dict[str, DataLoader]:
-        """Create data loaders for each split."""
-        if not all([self.train_dataset, self.val_dataset, self.test_dataset]):
-            raise RuntimeError("Datasets not initialized. Call setup() first.")
-
         return {
             'train': DataLoader(
                 self.train_dataset,
                 batch_size=self.config.batch_size,
                 shuffle=self.config.train_shuffle,
                 num_workers=self.config.num_workers,
-                pin_memory=self.config.pin_memory
+                pin_memory=self.config.pin_memory,
+                persistent_workers=(self.config.num_workers > 0)  # Keeps workers alive
             ),
-            'val': DataLoader(
-                self.val_dataset,
-                batch_size=self.config.batch_size,
-                shuffle=False,
-                num_workers=self.config.num_workers,
-                pin_memory=self.config.pin_memory
-            ),
-            'test': DataLoader(
-                self.test_dataset,
-                batch_size=self.config.batch_size,
-                shuffle=False,
-                num_workers=self.config.num_workers,
-                pin_memory=self.config.pin_memory
-            )
+            'val': DataLoader(self.val_dataset, batch_size=self.config.batch_size, shuffle=False),
+            'test': DataLoader(self.test_dataset, batch_size=self.config.batch_size, shuffle=False)
         }
