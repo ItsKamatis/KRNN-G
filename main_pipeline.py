@@ -7,6 +7,7 @@ import random
 import os
 from torch.utils.data import DataLoader
 from pathlib import Path
+from src.risk.moment_bounds import DiscreteMomentSolver
 
 # Import our custom modules
 from src.data.data_collector_v5 import DataCollector
@@ -155,53 +156,75 @@ def run_project_pipeline():
 
     print(f"   Selected Top {len(top_candidates)} Candidates.")
 
-    print(f"\n3. Risk Filter: Analyzing Heavy Tails (Gamma of Z-scores)...")
+    print(f"\n3. Risk Filter: Analyzing Tails (EVT) & Estimating Robust Bounds (DMP)...")
 
     scenarios_list = []
     final_tickers = []
     expected_returns_vec = []
+
     evt_engine = EVTEngine(tail_fraction=0.10)
+    dmp_solver = DiscreteMomentSolver(support_points=500)  # 500 points for speed
 
     tail_data = {}
-
-    # Data for Report
     candidates_report_data = []
+    bounds_report_data = []  # New list for DMP results
 
     for cand in top_candidates:
         ticker = cand['Ticker']
-        evt_params = evt_engine.analyze_tails(cand['Residuals'])
-        gamma = evt_params['gamma']
+        residuals = cand['Residuals']
 
+        # A. EVT Analysis (Hill Estimator)
+        evt_params = evt_engine.analyze_tails(residuals)
+        gamma = evt_params['gamma']
+        risk_metrics = evt_engine.calculate_risk_metrics(evt_params)  # Gets EVT-ES
+
+        # B. Discrete Moment Problem (Robust Bounds)
+        # We compute the Worst-Case CVaR using the first 4 moments of the residuals
+        dmp_bounds = dmp_solver.fit_and_estimate(
+            residuals,
+            confidence_level=0.99,
+            n_moments=4  # Mean, Var, Skew, Kurtosis
+        )
+
+        # Store Data
         tail_data[ticker] = {
             'gamma': gamma,
-            'residuals': cand['Residuals']
+            'residuals': residuals
         }
 
+        # Generate Scenarios (using EVT logic for optimization input)
         scenarios = evt_engine.generate_scenarios(
             n_simulations=n_sims,
             gamma=gamma,
             volatility=cand['Pred_Vol'],
             expected_return=cand['Pred_Return']
         )
-
         scenarios_list.append(scenarios)
         final_tickers.append(ticker)
         expected_returns_vec.append(cand['Pred_Return'])
 
-        # Calculate ES for Report
-        risk_metrics = evt_engine.calculate_risk_metrics(evt_params)
-
+        # Report Data Structs
         candidates_report_data.append({
             'Ticker': ticker,
             'Mu': cand['Pred_Return'],
             'Sigma': cand['Pred_Vol'],
             'Gamma': gamma,
-            'ES': risk_metrics['ES_0.99']
+            'ES': risk_metrics['ES_0.99']  # EVT Estimate
         })
 
-        print(f"   - {ticker}: Gamma={gamma:.4f}")
+        bounds_report_data.append({
+            'Ticker': ticker,
+            'EVT_CVaR': risk_metrics['ES_0.99'],
+            'DMP_CVaR': dmp_bounds.wc_cvar_z,
+            'Gamma': gamma
+        })
 
+        print(
+            f"   - {ticker}: Gamma={gamma:.2f} | EVT-CVaR={risk_metrics['ES_0.99']:.2f} | WC-CVaR={dmp_bounds.wc_cvar_z:.2f}")
+
+    # Plotting
     reporter.plot_tail_comparison(tail_data)
+    reporter.plot_risk_bounds_comparison(bounds_report_data)  # New Plot
 
     print("\n4. Optimization: Minimizing Portfolio CVaR...")
 
@@ -279,7 +302,8 @@ def run_project_pipeline():
         candidates=candidates_report_data,
         portfolio=portfolio_report_data,
         opt_metrics=opt_metrics,
-        test_metrics=test_metrics
+        test_metrics=test_metrics,
+        bounds_data=bounds_report_data  # Pass new data
     )
 
     print(f"\nPipeline Complete. Reports generated in {reporter.output_dir}")

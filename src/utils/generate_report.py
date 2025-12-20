@@ -120,21 +120,69 @@ class ReportGenerator:
         plt.close()
         return r2
 
-    def save_comprehensive_report(self, candidates, portfolio, opt_metrics, test_metrics):
-        """Saves all numerical data to a text file."""
+    def plot_risk_bounds_comparison(self, bounds_data: list):
+        """
+        Visualizes the gap between EVT estimates and Worst-Case Robust Bounds.
+        bounds_data: List of dicts with {Ticker, EVT_CVaR, DMP_CVaR, Gamma}
+        """
+        if not bounds_data:
+            return
+
+        tickers = [x['Ticker'] for x in bounds_data]
+        evt_vals = [x['EVT_CVaR'] for x in bounds_data]
+        dmp_vals = [x['DMP_CVaR'] for x in bounds_data]
+
+        x = np.arange(len(tickers))
+        width = 0.35
+
+        plt.figure(figsize=(12, 6))
+        plt.bar(x - width / 2, evt_vals, width, label='EVT Estimate (Historical)', color='skyblue', alpha=0.8)
+        plt.bar(x + width / 2, dmp_vals, width, label='DMP Bound (Worst-Case)', color='salmon', alpha=0.8)
+
+        plt.ylabel('CVaR (Z-Score units)')
+        plt.title('Risk Ambiguity: Estimated vs. Worst-Case CVaR')
+        plt.xticks(x, tickers, rotation=45)
+        plt.legend()
+        plt.grid(axis='y', linestyle='--', alpha=0.3)
+
+        # Annotate the "Risk Gap"
+        for i in range(len(tickers)):
+            gap = dmp_vals[i] - evt_vals[i]
+            plt.text(i, max(dmp_vals[i], evt_vals[i]) + 0.1, f"+{gap:.2f}", ha='center', fontsize=8, color='red')
+
+        plt.tight_layout()
+        save_path = os.path.join(self.output_dir, "5_risk_bounds_gap.png")
+        plt.savefig(save_path)
+        plt.close()
+
+    # Update save_comprehensive_report to accept bounds_data and print columns
+    def save_comprehensive_report(self, candidates, portfolio, opt_metrics, test_metrics, bounds_data=None):
         path = os.path.join(self.output_dir, "comprehensive_summary.txt")
         with open(path, "w") as f:
             f.write("=== KRNN RISK MANAGEMENT PIPELINE REPORT ===\n")
             f.write("============================================\n\n")
 
-            f.write("--- PHASE 3: SYSTEMATIC SELECTION (TOP CANDIDATES) ---\n")
-            f.write("Note: 'Mu' and 'Sigma' are daily predictions from the Neural Net.\n")
-            f.write("      'Gamma' is the Tail Index from EVT (Higher = Riskier).\n\n")
-            f.write(f"{'Ticker':<8} {'Mu (%)':<10} {'Sigma (%)':<10} {'Gamma':<10} {'ES 99% (Z)':<12}\n")
-            f.write("-" * 60 + "\n")
+            f.write("--- PHASE 3: SYSTEMATIC SELECTION & ROBUST RISK ANALYSIS ---\n")
+            f.write("Note: 'WC-CVaR' is the Worst-Case Expected Shortfall derived via Linear Programming (DMP).\n")
+            f.write(
+                f"{'Ticker':<8} {'Mu(%)':<8} {'Vol(%)':<8} {'Gamma':<8} {'EVT-CVaR':<10} {'WC-CVaR':<10} {'Risk Gap':<10}\n")
+            f.write("-" * 75 + "\n")
+
+            # Map bounds data for easy access
+            dmp_map = {x['Ticker']: x['DMP_CVaR'] for x in (bounds_data or [])}
+
             for c in candidates:
+                dmp_val = dmp_map.get(c['Ticker'], 0.0)
+                risk_gap = dmp_val - c['ES']
                 f.write(
-                    f"{c['Ticker']:<8} {c['Mu'] * 100:<10.4f} {c['Sigma'] * 100:<10.4f} {c['Gamma']:<10.4f} {c['ES']:<12.4f}\n")
+                    f"{c['Ticker']:<8} "
+                    f"{c['Mu'] * 100:<8.2f} "
+                    f"{c['Sigma'] * 100:<8.2f} "
+                    f"{c['Gamma']:<8.2f} "
+                    f"{c['ES']:<10.2f} "
+                    f"{dmp_val:<10.2f} "
+                    f"{risk_gap:<10.2f}\n"
+                )
             f.write("\n")
 
             f.write("--- PHASE 4: OPTIMIZATION RESULTS ---\n")
