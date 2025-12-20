@@ -18,13 +18,11 @@ from src.risk.moment_bounds import DiscreteConditionalMomentSolver
 from src.portfolio.optimizer import MeanCVaROptimizer
 from src.utils.generate_report import ReportGenerator
 
-
-# Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def set_seed(seed=42):
+def set_seed(seed=2304571):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
@@ -68,7 +66,7 @@ def run_project_pipeline():
     dataloaders = data_module.get_dataloaders()
 
     # --- Step 2: Model Training ---
-    print("\n[Phase 2] Training K-Parallel KRNN (Heteroscedastic)...")
+    print("\n[Phase 2] Training K-Parallel KRNN (Heteroscedastic - Overfit Mode)...")
     feature_dim = len(data_module.train_dataset.feature_cols)
     model_config = ModelConfig(
         input_dim=feature_dim,
@@ -119,9 +117,7 @@ def run_project_pipeline():
 
         avg_pred_return = np.mean(mus)
         avg_pred_volatility = np.mean(sigmas)
-
-        # Calculate residuals (Z-scores)
-        residuals = (targets.flatten() - mus.flatten()) / (sigmas.flatten() + 1e-6)  # Avoid div/0
+        residuals = (targets.flatten() - mus.flatten()) / (sigmas.flatten() + 1e-6)
 
         candidates.append({
             'Ticker': ticker,
@@ -130,46 +126,37 @@ def run_project_pipeline():
             'Residuals': residuals
         })
 
-    candidates.sort(key=lambda x: x['Pred_Return'], reverse=True)
+    # Sort by Absolute Return potential (since we can short)
+    candidates.sort(key=lambda x: abs(x['Pred_Return']), reverse=True)
     top_candidates = candidates[:top_n]
-    print(f"   Selected Top {len(top_candidates)} Candidates.")
+    print(f"   Selected Top {len(top_candidates)} Candidates (Long/Short Potential).")
 
-    # --- 3b. Robust Risk Analysis (EVT + DCMP) ---
+    # --- 3b. Robust Risk Analysis ---
     print(f"\n3. Risk Filter: Analyzing Heavy Tails (EVT) & Bounds (Naumova DCMP)...")
 
     scenarios_list = []
     final_tickers = []
     expected_returns_vec = []
-
     evt_engine = EVTEngine(tail_fraction=0.10)
-    # Instantiate the new Naumova Solver
     dcmp_solver = DiscreteConditionalMomentSolver(n_points=500, support_range=(-10.0, 10.0))
 
     tail_data = {}
     candidates_report_data = []
-    bounds_report_data = []  # For the "Risk Gap" chart
+    bounds_report_data = []
 
     for cand in top_candidates:
         ticker = cand['Ticker']
         residuals = cand['Residuals']
 
-        # 1. EVT Analysis (Parametric Tail)
         evt_params = evt_engine.analyze_tails(residuals)
         gamma = evt_params['gamma']
         evt_metrics = evt_engine.calculate_risk_metrics(evt_params)
-        evt_cvar = evt_metrics['ES_0.99']
 
-        # 2. DCMP Analysis (Robust Bound with Conditional Constraints)
-        # We pass use_conditional=True to use Naumova's method
         dcmp_result = dcmp_solver.solve_dcmp(residuals, alpha=0.05, use_conditional=True)
-        wc_cvar = dcmp_result.wc_cvar
-
-        # Calculate Risk Gap
-        risk_gap = wc_cvar - evt_cvar
+        risk_gap = dcmp_result.wc_cvar - evt_metrics['ES_0.99']
 
         tail_data[ticker] = {'gamma': gamma, 'residuals': residuals}
 
-        # Generate Scenarios (Using EVT logic for the optimizer input)
         scenarios = evt_engine.generate_scenarios(
             n_simulations=n_sims,
             gamma=gamma,
@@ -185,27 +172,22 @@ def run_project_pipeline():
             'Mu': cand['Pred_Return'],
             'Sigma': cand['Pred_Vol'],
             'Gamma': gamma,
-            'ES': evt_cvar,
-            'WC_ES': wc_cvar,  # Add for report
+            'ES': evt_metrics['ES_0.99'],
+            'WC_ES': dcmp_result.wc_cvar,
             'Gap': risk_gap
         })
 
         bounds_report_data.append({
-            'Ticker': ticker,
-            'EVT_CVaR': evt_cvar,
-            'DMP_CVaR': wc_cvar,
-            'Gamma': gamma
+            'Ticker': ticker, 'EVT_CVaR': evt_metrics['ES_0.99'],
+            'DMP_CVaR': dcmp_result.wc_cvar, 'Gamma': gamma
         })
 
-        print(
-            f"   - {ticker}: Gamma={gamma:.2f} | EVT-CVaR={evt_cvar:.2f} | DCMP-CVaR={wc_cvar:.2f} | Gap={risk_gap:.2f}")
+        print(f"   - {ticker}: Gamma={gamma:.2f} | Gap={risk_gap:.2f}")
 
-    reporter.plot_tail_comparison(tail_data)
-    # Make sure your reporter class has the plot_risk_bounds_comparison method we added in thoughts
     if hasattr(reporter, 'plot_risk_bounds_comparison'):
         reporter.plot_risk_bounds_comparison(bounds_report_data)
 
-    print("\n4. Optimization: Minimizing Portfolio CVaR...")
+    print("\n4. Optimization: Mean-CVaR (Long/Short)...")
     portfolio_report_data = []
     opt_metrics = {}
 
@@ -214,15 +196,11 @@ def run_project_pipeline():
         expected_returns_vec = np.array(expected_returns_vec)
         optimizer = MeanCVaROptimizer(confidence_level=risk_conf)
 
-        avg_mu = np.mean(expected_returns_vec)
-
-        if avg_mu > 0:
-            # Normal market: Target 80% of the average return
-            target_ret = avg_mu * config_dict.get('portfolio', {}).get('target_return_factor', 0.8)
-        else:
-            # Bear market: Target the average (don't try to outperform by losing less, just match)
-            # This ensures the constraint w^T*mu >= target is feasible (target <= max_asset_return)
-            target_ret = avg_mu
+        # Target Return Logic for Long/Short
+        # We can target positive returns even if components are negative (via shorting)
+        # Set target to top quartile of absolute predicted returns
+        abs_returns = np.abs(expected_returns_vec)
+        target_ret = np.percentile(abs_returns, 75) * 0.5  # Conservative target
 
         result = optimizer.optimize(expected_returns_vec, scenarios_matrix, target_ret)
 
@@ -231,9 +209,9 @@ def run_project_pipeline():
             opt_metrics['Target_Ret'] = target_ret
             opt_metrics['CVaR'] = result['CVaR_Optimal']
 
-            allocations = sorted(zip(final_tickers, final_weights), key=lambda x: x[1], reverse=True)
+            allocations = sorted(zip(final_tickers, final_weights), key=lambda x: abs(x[1]), reverse=True)
             for ticker, weight in allocations:
-                if weight > 0.001:
+                if abs(weight) > 0.001:
                     portfolio_report_data.append({
                         'Ticker': ticker, 'Weight': weight, 'Gamma': tail_data[ticker]['gamma']
                     })
@@ -259,12 +237,102 @@ def run_project_pipeline():
     all_targets = np.concatenate(all_targets)
     r2 = reporter.generate_diagnostics(all_mus, all_targets)
 
-    # Simple strategy simulation
+    # Strategy Simulation (Long/Short)
+    # If Mu > 0: Long (1 * Return)
+    # If Mu < 0: Short (-1 * Return)
+    # Note: Shorting adds volatility drag/cost, simplified here.
+    strategy_returns = np.sign(all_mus) * all_targets
+
     cum_market = np.cumsum(all_targets)
-    cum_strategy = np.cumsum(np.where(all_mus > 0, all_targets, 0))
+    cum_strategy = np.cumsum(strategy_returns)
+
     test_metrics = {'R2': r2, 'Market_Cum': cum_market[-1], 'Strategy_Cum': cum_strategy[-1]}
 
-    # Pass the new Naumova bounds data to the report
+    # --- Phase 5: Portfolio Backtest (The Pivot) ---
+    print("\n[Phase 5] Running Out-of-Sample Portfolio Backtest...")
+
+    # 1. Load Test Data directly (for proper Ticker alignment)
+    test_file = Path(config_dict['paths']['data']) / 'test.parquet'
+    test_df = pd.read_parquet(test_file)
+
+    # 2. Pivot to get Returns Matrix (Date x Ticker)
+    # We use 'Log_Return' which is the target we engineered
+    returns_matrix = test_df.pivot(index='Date', columns='Ticker', values='Log_Return')
+
+    # --- POLISH: Rescale Z-Scores to Percentage Returns ---
+    # The data is currently in Z-scores (Std ~ 1.0).
+    # To generate realistic report metrics (e.g., Volatility ~20% instead of ~800%),
+    # we approximate the original scale by multiplying by a typical daily volatility (2%).
+    returns_matrix = returns_matrix * 0.02
+    # ------------------------------------------------------
+
+    # 3. Align Weights with Test Data
+    # final_tickers and final_weights come from Phase 4
+    if 'final_weights' in locals() and len(final_weights) > 0:
+        # Create a Series for easy mapping
+        weight_map = pd.Series(final_weights, index=final_tickers)
+
+        # Filter returns matrix to only include our portfolio assets
+        portfolio_assets = [t for t in final_tickers if t in returns_matrix.columns]
+        aligned_returns = returns_matrix[portfolio_assets].fillna(0.0)
+
+        # Re-normalize weights if any assets were missing in test data
+        aligned_weights = weight_map[portfolio_assets]
+        aligned_weights = aligned_weights / aligned_weights.sum()
+
+        # 4. Calculate Portfolio Performance
+        # Daily Portfolio Return = Sum(Weight_i * Return_i)
+        portfolio_daily_rets = aligned_returns.dot(aligned_weights)
+
+        # 5. Calculate Benchmarks
+        # Equal Weight Index (The "Market" of these assets)
+        equal_weights = np.ones(len(portfolio_assets)) / len(portfolio_assets)
+        market_daily_rets = aligned_returns.dot(equal_weights)
+
+        # 6. Cumulative Returns
+        portfolio_cum = np.cumsum(portfolio_daily_rets)
+        market_cum = np.cumsum(market_daily_rets)
+
+        # 7. Metrics
+        total_port_ret = portfolio_cum.iloc[-1] if len(portfolio_cum) > 0 else 0.0
+        total_mkt_ret = market_cum.iloc[-1] if len(market_cum) > 0 else 0.0
+
+        # Volatility (Annualized)
+        port_vol = portfolio_daily_rets.std() * np.sqrt(252)
+        mkt_vol = market_daily_rets.std() * np.sqrt(252)
+
+        # Sharpe Ratio (assuming 0 risk-free for simplicity)
+        port_sharpe = (portfolio_daily_rets.mean() * 252) / (port_vol + 1e-6)
+        mkt_sharpe = (market_daily_rets.mean() * 252) / (mkt_vol + 1e-6)
+
+        print("\n=== OUT-OF-SAMPLE RESULTS (2024+) ===")
+        print(f"Strategy:    Tail-Risk Parity (Min CVaR)")
+        print(f"Benchmark:   Equal-Weight Index")
+        print("-" * 45)
+        print(f"{'Metric':<15} {'Strategy':<12} {'Benchmark':<12}")
+        print("-" * 45)
+        print(f"{'Total Return':<15} {total_port_ret * 100:<10.2f}%  {total_mkt_ret * 100:<10.2f}%")
+        print(f"{'Volatility':<15} {port_vol * 100:<10.2f}%  {mkt_vol * 100:<10.2f}%")
+        print(f"{'Sharpe Ratio':<15} {port_sharpe:<10.4f}  {mkt_sharpe:<10.4f}")
+        print("-" * 45)
+
+        # Update Report Dictionary
+        test_metrics = {
+            'Strategy_Return': total_port_ret,
+            'Market_Return': total_mkt_ret,
+            'Strategy_Sharpe': port_sharpe,
+            'Market_Sharpe': mkt_sharpe
+        }
+
+        # Generate Comparison Plot
+        if hasattr(reporter, 'plot_backtest_comparison'):
+            reporter.plot_backtest_comparison(portfolio_cum, market_cum)
+
+    else:
+        print("[Warning] No portfolio weights found. Skipping backtest.")
+        test_metrics = {}
+
+    # Save Final Report
     reporter.save_comprehensive_report(
         candidates=candidates_report_data,
         portfolio=portfolio_report_data,

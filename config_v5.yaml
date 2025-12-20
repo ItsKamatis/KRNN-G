@@ -1,54 +1,52 @@
-# KRNN Rev. 5 Configuration
+# KRNN Rev. 5 Configuration - OVERFIT TEST
 
 # Model architecture
 model:
-  input_dim: 8              # Number of features (ensure this reflects the derived features only)
-  hidden_dim: 256            # RNN hidden dimension
-  num_layers: 3              # Number of RNN layers
-  dropout: 0.05               # Dropout rate
-  bidirectional: true        # Use bidirectional RNN
+  input_dim: 8              # Matches features_v5.py (8 stationary features)
+  hidden_dim: 256           # High capacity
+  num_layers: 3             # Deep network
+  dropout: 0.0              # CHANGED: 0.0 to allow overfitting/memorization
+  bidirectional: true
 
 # MLflow configuration
 mlflow:
-  tracking_uri: "mlruns"             # Local filesystem tracking
-  experiment_name: "krnn_v5_local"   # Experiment name
-  model_name: "krnn_stock_predictor" # Model name in MLflow
-  artifact_store: "artifacts"        # Directory to store artifacts
+  tracking_uri: "mlruns"
+  experiment_name: "krnn_v5_local"
+  model_name: "krnn_stock_predictor"
+  artifact_store: "artifacts"
   tags:
     project: "stock_prediction"
-    version: "5.0"
+    version: "5.0_overfit"
 
 # Data processing
 data:
-  window_size: 60           # Lookback window
-  batch_size: 32            # Training batch size
-  features:                 # Technical indicators to use (exclude 'Volume')
+  window_size: 60           # 60 days context
+  batch_size: 16            # CHANGED: Small batch size to add gradient noise and escape mean
+  features:
     - RSI
     - MACD
     - BB_UPPER
     - BB_LOWER
     - ATR
-    - Volume_MA_5        # Example derived feature: 5-day Moving Average of Volume
-    - Volume_Change      # Example derived feature: Volume Change Percentage
-  target_columns:          # Price data columns (exclude 'Volume' if not needed as target)
+    - Volume_MA_5
+    - Volume_Change
+  target_columns:
     - Open
     - High
     - Low
     - Close
-    # - Volume              # Removed if 'Volume' is not a target; include if necessary
-# NEW: Time-Aware Splitting
   train_start: '2018-01-01'
   train_end: '2023-01-01'
-  val_end: '2024-01-01' # Test set is everything after this
+  val_end: '2024-01-01'
 
 # Experiment tracking
 experiment:
   name: "krnn_v5"
   tracking_uri: "./mlruns"
   artifact_dir: "./data/checkpoints"
-  memory_threshold: 0.85    # Memory usage threshold
-  gpu_threshold: 0.85        # GPU memory threshold
-  checkpoint_freq: 5         # Save every N epochs
+  memory_threshold: 0.85
+  gpu_threshold: 0.85
+  checkpoint_freq: 5
 
 # Training parameters
 training:
@@ -57,14 +55,14 @@ training:
   early_stop_patience: 15
   gradient_clip: 1.0
   optimizer: "adam"
-  scheduler:              # Learning rate scheduler
+  scheduler:
     type: "reduce_on_plateau"
     patience: 10
     factor: 0.5
-  patience: 15          # Early stopping patience
-  min_delta: 0.00001       # Minimum improvement required
-  scheduler_patience: 5 # Reduce LR after 5 epochs of no improvement
-  scheduler_factor: 0.5 # Halve the
+  patience: 15
+  min_delta: 0.00001
+  scheduler_patience: 5
+  scheduler_factor: 0.5
 
 # Paths
 paths:
@@ -74,18 +72,9 @@ paths:
 
 # Hardware
 hardware:
-  gpu: 0                  # -1 for CPU, >=0 for specific GPU
-  num_workers: 12          # DataLoader workers
-  pin_memory: true        # Pin memory for GPU training
-
-# Additional Sections (Optional)
-
-# Feature Engineering Configuration
-feature_engineering:
-  volume_features:
-    - moving_average: 3   # 5-day moving average
-    - percentage_change: true  # Calculate percentage change
-  # Add more derived features as needed
+  gpu: 0
+  num_workers: 0          # Set to 0 for Windows compatibility
+  pin_memory: true
 
 # Logging configuration
 logging:
@@ -99,7 +88,7 @@ debug: true
 
 # Portfolio Settings
 portfolio:
-  top_n_assets: 10          # The Funnel: How many winners to select for optimization
-  risk_confidence: 0.95     # CVaR confidence level (95% is standard for daily)
-  n_simulations: 10000       # Monte Carlo scenarios per asset
-  target_return_factor: 0.85 # Target 80% of the average winner's return (Feasibility buffer)
+  top_n_assets: 10
+  risk_confidence: 0.95
+  n_simulations: 1000
+  target_return_factor: 0.8
