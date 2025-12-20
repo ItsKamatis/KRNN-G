@@ -2,7 +2,7 @@
 
 # Model architecture
 model:
-  input_dim: 10              # Number of features (ensure this reflects the derived features only)
+  input_dim: 8              # Number of features (ensure this reflects the derived features only)
   hidden_dim: 256            # RNN hidden dimension
   num_layers: 3              # Number of RNN layers
   dropout: 0.05               # Dropout rate
