@@ -77,7 +77,7 @@ This is used as a robustness check against EVT-based parametric estimates.
 
 ---
 
-## Repository structure (typical)
+## Repository structure
 
 > Adjust names if yours differ, but keep the mapping clear.
 
@@ -90,7 +90,7 @@ This is used as a robustness check against EVT-based parametric estimates.
 - `src/models/`  
   KRNN / K-parallel GRU encoder, heteroscedastic head
 
-- `src/training/` or `src/utils/`  
+- `src/utils/`  
   Trainer (GNLL loss, early stopping, scheduler, grad clipping)
 
 - `src/risk/`
