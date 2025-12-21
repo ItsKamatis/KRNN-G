@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="Finalizing">
+    <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="Naumova DMP">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config_v5.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config_v5.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/portfolio/optimizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/portfolio/optimizer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +77,7 @@
       <recent name="D:\PyCharm Projects\KRNN_V5" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.data_collector_v5">
     <configuration name="data_collector_v5" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="KRNN_V5" />
       <option name="ENV_FILES" value="" />
@@ -158,7 +155,8 @@
       <workItem from="1766021730839" duration="14850000" />
       <workItem from="1766080851902" duration="900000" />
       <workItem from="1766111641798" duration="15288000" />
-      <workItem from="1766253958435" duration="7248000" />
+      <workItem from="1766253958435" duration="9062000" />
+      <workItem from="1766292045816" duration="4000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -272,7 +270,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766214207625</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Naumova DMP">
+      <option name="closed" value="true" />
+      <created>1766263553789</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1766263553789</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -285,7 +291,8 @@
     <MESSAGE value="Rigor" />
     <MESSAGE value="Rigor Success" />
     <MESSAGE value="Finalizing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finalizing" />
+    <MESSAGE value="Naumova DMP" />
+    <option name="LAST_COMMIT_MESSAGE" value="Naumova DMP" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
