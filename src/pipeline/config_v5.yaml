@@ -1,11 +1,11 @@
-# KRNN Rev. 5 Configuration - OVERFIT TEST
+# KRNN Rev. 5 Configuration - GPU OPTIMIZED
 
 # Model architecture
 model:
-  input_dim: 8              # Matches features_v5.py (8 stationary features)
-  hidden_dim: 256           # High capacity
-  num_layers: 3             # Deep network
-  dropout: 0.0              # CHANGED: 0.0 to allow overfitting/memorization
+  input_dim: 8
+  hidden_dim: 256
+  num_layers: 3
+  dropout: 0.0
   bidirectional: true
 
 # MLflow configuration
@@ -16,12 +16,13 @@ mlflow:
   artifact_store: "artifacts"
   tags:
     project: "stock_prediction"
-    version: "5.0_overfit"
+    version: "5.0_gpu_resident"
 
 # Data processing
 data:
-  window_size: 60           # 60 days context
-  batch_size: 16            # CHANGED: Small batch size to add gradient noise and escape mean
+  window_size: 60
+  # --- FIX 1: Massive Batch Size ---
+  batch_size: 2048          # Huge batch size to utilize GPU parallelism
   features:
     - RSI
     - MACD
@@ -51,7 +52,7 @@ experiment:
 # Training parameters
 training:
   epochs: 100
-  learning_rate: 0.0005
+  learning_rate: 0.001       # Increased LR slightly for larger batch size
   early_stop_patience: 15
   gradient_clip: 1.0
   optimizer: "adam"
@@ -73,8 +74,8 @@ paths:
 # Hardware
 hardware:
   gpu: 0
-  num_workers: 0          # Set to 0 for Windows compatibility
-  pin_memory: true
+  num_workers: 0          # MUST be 0 when data is on GPU
+  pin_memory: false       # turn OFF because data is already on GPU
 
 # Logging configuration
 logging:

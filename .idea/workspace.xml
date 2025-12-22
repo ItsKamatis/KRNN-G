@@ -4,10 +4,273 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="Naumova DMP">
-      <change afterPath="$PROJECT_DIR$/src/pipeline/config_v5.yaml" afterDir="false" />
+    <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="Robust Pipeline">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pipeline/robust_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pipeline/robust_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/0/meta.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/meta.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.batch_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.features" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.target_columns" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.train_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.train_start" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.val_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/data.window_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/debug" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/environment" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/error_message" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/error_type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/experiment.artifact_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/experiment.checkpoint_freq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/experiment.gpu_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/experiment.memory_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/experiment.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/experiment.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/hardware.gpu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/hardware.num_workers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/hardware.pin_memory" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/logging.format" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/logging.level" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/logging.log_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/mlflow.artifact_store" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/mlflow.experiment_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/mlflow.model_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/mlflow.tags.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/mlflow.tags.version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/mlflow.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/model.bidirectional" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/model.dropout" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/model.hidden_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/model.input_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/model.num_layers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/paths.checkpoints" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/paths.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/paths.logs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/portfolio.n_simulations" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/portfolio.risk_confidence" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/portfolio.target_return_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/portfolio.top_n_assets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/start_time" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.early_stop_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.epochs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.gradient_clip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.learning_rate" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.min_delta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.optimizer" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.scheduler.factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.scheduler.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.scheduler.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.scheduler_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/params/training.scheduler_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/git_branch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/git_commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/mlflow.runName" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/mlflow.source.git.commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/mlflow.source.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/mlflow.source.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/mlflow.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/007c9514254947969ca645ac9565561f/tags/status" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/meta.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/metrics/accuracy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/metrics/loss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.batch_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.features" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.target_columns" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.train_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.train_start" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.val_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/data.window_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/debug" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/environment" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/error_message" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/error_type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/experiment.artifact_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/experiment.checkpoint_freq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/experiment.gpu_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/experiment.memory_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/experiment.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/experiment.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/hardware.gpu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/hardware.num_workers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/hardware.pin_memory" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/logging.format" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/logging.level" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/logging.log_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/mlflow.artifact_store" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/mlflow.experiment_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/mlflow.model_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/mlflow.tags.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/mlflow.tags.version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/mlflow.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/model.bidirectional" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/model.dropout" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/model.hidden_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/model.input_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/model.num_layers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/paths.checkpoints" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/paths.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/paths.logs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/portfolio.n_simulations" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/portfolio.risk_confidence" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/portfolio.target_return_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/portfolio.top_n_assets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/start_time" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.early_stop_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.epochs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.gradient_clip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.learning_rate" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.min_delta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.optimizer" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.scheduler.factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.scheduler.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.scheduler.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.scheduler_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/params/training.scheduler_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/git_branch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/git_commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/mlflow.runName" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/mlflow.source.git.commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/mlflow.source.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/mlflow.source.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/mlflow.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/tags/status" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/meta.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.batch_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.features" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.target_columns" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.train_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.train_start" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.val_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/data.window_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/debug" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/environment" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/error_message" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/error_type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/experiment.artifact_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/experiment.checkpoint_freq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/experiment.gpu_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/experiment.memory_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/experiment.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/experiment.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/hardware.gpu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/hardware.num_workers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/hardware.pin_memory" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/logging.format" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/logging.level" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/logging.log_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/mlflow.artifact_store" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/mlflow.experiment_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/mlflow.model_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/mlflow.tags.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/mlflow.tags.version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/mlflow.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/model.bidirectional" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/model.dropout" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/model.hidden_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/model.input_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/model.num_layers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/paths.checkpoints" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/paths.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/paths.logs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/portfolio.n_simulations" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/portfolio.risk_confidence" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/portfolio.target_return_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/portfolio.top_n_assets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/start_time" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.early_stop_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.epochs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.gradient_clip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.learning_rate" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.min_delta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.optimizer" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.scheduler.factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.scheduler.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.scheduler.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.scheduler_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/params/training.scheduler_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/git_branch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/git_commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/mlflow.runName" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/mlflow.source.git.commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/mlflow.source.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/mlflow.source.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/mlflow.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/36ef0cd660004a879820bf80f601f2cc/tags/status" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/meta.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.batch_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.features" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.target_columns" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.train_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.train_start" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.val_end" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/data.window_size" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/debug" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/environment" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/error_message" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/error_type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/experiment.artifact_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/experiment.checkpoint_freq" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/experiment.gpu_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/experiment.memory_threshold" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/experiment.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/experiment.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/hardware.gpu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/hardware.num_workers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/hardware.pin_memory" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/logging.format" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/logging.level" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/logging.log_dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/mlflow.artifact_store" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/mlflow.experiment_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/mlflow.model_name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/mlflow.tags.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/mlflow.tags.version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/mlflow.tracking_uri" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/model.bidirectional" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/model.dropout" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/model.hidden_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/model.input_dim" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/model.num_layers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/paths.checkpoints" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/paths.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/paths.logs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/portfolio.n_simulations" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/portfolio.risk_confidence" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/portfolio.target_return_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/portfolio.top_n_assets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/start_time" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.early_stop_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.epochs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.gradient_clip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.learning_rate" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.min_delta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.optimizer" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.scheduler.factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.scheduler.patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.scheduler.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.scheduler_factor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/params/training.scheduler_patience" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/git_branch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/git_commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/mlflow.runName" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/mlflow.source.git.commit" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/mlflow.source.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/mlflow.source.type" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/mlflow.user" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/a044aa56dcd948379128bcde97e4c335/tags/status" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mlruns/421806203722508828/meta.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/3_allocation_logic.png" beforeDir="false" afterPath="$PROJECT_DIR$/reports/3_allocation_logic.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/4_prediction_accuracy.png" beforeDir="false" afterPath="$PROJECT_DIR$/reports/4_prediction_accuracy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/5_risk_bounds_gap.png" beforeDir="false" afterPath="$PROJECT_DIR$/reports/5_risk_bounds_gap.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reports/comprehensive_summary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/reports/comprehensive_summary.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/krnn_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/krnn_v5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/train_v5.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/trainer_v5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/trainer_v5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_local_v5.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,7 +278,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="42" />
+    <option name="cachedIndexableFilesCount" value="40" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -34,12 +297,12 @@
     &quot;assignee&quot;: &quot;ItsKamatis&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/ItsKamatis/KRNN-2025.git",
-    "accountId": "36c0120a-5724-4140-8e17-9de1d6fcb06a"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ItsKamatis/KRNN-2025.git&quot;,
+    &quot;accountId&quot;: &quot;36c0120a-5724-4140-8e17-9de1d6fcb06a&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -52,34 +315,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.data_collector_v5.executor": "Run",
-    "Python.generate_report.executor": "Run",
-    "Python.main_pipeline.executor": "Run",
-    "Python.robust_pipeline.executor": "Run",
-    "Python.train_local_v5.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/PyCharmProjects/KRNN-G",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.data_collector_v5.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generate_report.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.robust_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train_local_v5.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/PyCharmProjects/KRNN-G&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\PyCharmProjects\KRNN-G" />
@@ -90,7 +353,7 @@
       <recent name="D:\PyCharm Projects\KRNN_V5" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.train_local_v5">
+  <component name="RunManager" selected="Python.data_collector_v5">
     <configuration name="data_collector_v5" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="KRNN_V5" />
       <option name="ENV_FILES" value="" />
@@ -221,7 +484,11 @@
       <workItem from="1766253958435" duration="9062000" />
       <workItem from="1766292045816" duration="4000" />
       <workItem from="1766293094149" duration="188000" />
-      <workItem from="1766439787531" duration="3227000" />
+      <workItem from="1766439787531" duration="6071000" />
+      <workItem from="1766446457287" duration="5000" />
+      <workItem from="1766446568421" duration="1041000" />
+      <workItem from="1766447799440" duration="4000" />
+      <workItem from="1766448183309" duration="2335000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -367,7 +634,23 @@
       <option name="project" value="LOCAL" />
       <updated>1766440597884</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Robust Pipeline">
+      <option name="closed" value="true" />
+      <created>1766443664760</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1766443664760</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Robust Pipeline">
+      <option name="closed" value="true" />
+      <created>1766445073515</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1766445073515</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -381,23 +664,14 @@
     <MESSAGE value="Rigor Success" />
     <MESSAGE value="Finalizing" />
     <MESSAGE value="Naumova DMP" />
-    <option name="LAST_COMMIT_MESSAGE" value="Naumova DMP" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/model/train_v5.py</url>
-          <line>1</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Robust Pipeline" />
+    <option name="LAST_COMMIT_MESSAGE" value="Robust Pipeline" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/KRNN_G$robust_pipeline.coverage" NAME="robust_pipeline Coverage Results" MODIFIED="1766443156199" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/KRNN$main_pipeline.coverage" NAME="main_pipeline Coverage Results" MODIFIED="1766261225315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/KRNN_G$train_local_v5.coverage" NAME="train_local_v5 Coverage Results" MODIFIED="1766443480294" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KRNN_G$train_local_v5.coverage" NAME="train_local_v5 Coverage Results" MODIFIED="1766445945275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KRNN_G$main_pipeline.coverage" NAME="main_pipeline Coverage Results" MODIFIED="1766446074652" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/KRNN$data_collector_v5.coverage" NAME="data_collector_v5 Coverage Results" MODIFIED="1766254463936" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/data" />
     <SUITE FILE_PATH="coverage/KRNN$generate_report.coverage" NAME="generate_report Coverage Results" MODIFIED="1766261196242" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/utils" />
   </component>

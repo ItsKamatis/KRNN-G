@@ -5,37 +5,37 @@
 Note: 'WC-CVaR' is the Worst-Case Expected Shortfall derived via Linear Programming (DMP).
 Ticker   Mu(%)    Vol(%)   Gamma    EVT-CVaR   WC-CVaR    Risk Gap  
 ---------------------------------------------------------------------------
-BIIB     0.29     2.47     0.44     3.57       0.56       -3.02     
-ADBE     0.29     2.47     0.48     4.87       1.71       -3.15     
-AMD      0.29     2.47     0.41     6.06       2.17       -3.89     
-ABNB     0.29     2.47     0.31     3.60       2.10       -1.49     
-GOOGL    0.29     2.47     0.32     2.56       0.57       -1.99     
-GOOG     0.29     2.47     0.41     3.36       0.57       -2.79     
-AMZN     0.29     2.47     0.43     4.32       1.72       -2.60     
-AEP      0.29     2.47     0.42     3.16       0.54       -2.63     
-AMGN     0.29     2.47     0.44     2.90       0.54       -2.36     
-ADI      0.29     2.47     0.28     2.47       0.56       -1.91     
+GEHC     0.11     2.58     0.26     2.15       0.56       -1.59     
+ADBE     0.11     2.58     0.51     4.86       0.59       -4.27     
+AMD      0.11     2.58     0.43     5.87       2.10       -3.76     
+ABNB     0.11     2.58     0.33     3.41       1.44       -1.97     
+GOOGL    0.11     2.58     0.34     2.43       0.58       -1.85     
+GOOG     0.11     2.58     0.44     3.28       0.58       -2.71     
+AMZN     0.11     2.58     0.46     4.26       0.58       -3.67     
+AEP      0.11     2.58     0.45     3.14       0.55       -2.59     
+AMGN     0.11     2.58     0.48     2.91       0.53       -2.38     
+ADI      0.11     2.58     0.29     2.33       0.57       -1.75     
 
 --- PHASE 4: OPTIMIZATION RESULTS ---
 Objective: Minimize CVaR (95%)
-Target Daily Return: > 0.1431%
-Optimized Portfolio CVaR: 0.0281
+Target Daily Return: > 0.0526%
+Optimized Portfolio CVaR: 0.0303
 
 Final Portfolio Allocation:
 Ticker   Weight (%)   Tail Risk (Gamma)   
 --------------------------------------------------
-ABNB     18.01        0.3116              
-ADI      17.75        0.2752              
-BIIB     13.37        0.4440              
-AMD      10.27        0.4128              
-GOOGL    9.87         0.3203              
-GOOG     8.84         0.4090              
-AMZN     8.55         0.4339              
-AMGN     7.36         0.4367              
-AEP      3.98         0.4185              
-ADBE     1.98         0.4802              
+GEHC     19.64        0.2564              
+ADI      17.92        0.2930              
+ABNB     16.50        0.3264              
+GOOG     12.15        0.4400              
+AMD      10.26        0.4301              
+AMZN     8.05         0.4625              
+GOOGL    5.94         0.3428              
+ADBE     5.54         0.5125              
+AEP      2.17         0.4550              
+AMGN     1.83         0.4811              
 
 --- PHASE 5: OUT-OF-SAMPLE DIAGNOSTICS (2024+) ---
-Test Set R-Squared: 0.0000
-Cumulative Market Return:   0.00%
-Cumulative Strategy Return: 0.00%
+Test Set R-Squared: -0.0009
+Cumulative Market Return:   1650.11%
+Cumulative Strategy Return: 1631.11%
