@@ -4,11 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="Naumova DMP" />
+    <list default="true" id="85089f33-9993-4c98-ac18-4c5ff11dcd04" name="Changes" comment="Naumova DMP">
+      <change afterPath="$PROJECT_DIR$/src/pipeline/robust_pipeline.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/risk/scenario_engine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/portfolio/optimizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/portfolio/optimizer.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="38" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -26,12 +35,12 @@
     &quot;assignee&quot;: &quot;ItsKamatis&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/ItsKamatis/KRNN_V5.git&quot;,
-    &quot;accountId&quot;: &quot;36c0120a-5724-4140-8e17-9de1d6fcb06a&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/ItsKamatis/KRNN-2025.git",
+    "accountId": "36c0120a-5724-4140-8e17-9de1d6fcb06a"
   }
-}</component>
+}]]></component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -159,6 +168,7 @@
       <workItem from="1766253958435" duration="9062000" />
       <workItem from="1766292045816" duration="4000" />
       <workItem from="1766293094149" duration="188000" />
+      <workItem from="1766439787531" duration="803000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
