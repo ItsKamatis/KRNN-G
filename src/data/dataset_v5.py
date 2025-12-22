@@ -16,23 +16,25 @@ class DataConfig:
     batch_size: int = 64
     sequence_length: int = 10
     train_shuffle: bool = True
-    num_workers: int = 0  # Set to 0 for Windows if you see pickling errors, else 4
-    pin_memory: bool = True
+    num_workers: int = 0
+    pin_memory: bool = False
+    device: str = "cpu"  # Added field to control storage location
 
 
 class StockDataset(Dataset):
     """
-    Optimized Tensor-based Dataset.
-    Pre-processes data into RAM to prevent CPU bottlenecks during training.
+    Optimized GPU-Resident Dataset.
     """
 
     def __init__(
             self,
             features: pd.DataFrame,
             sequence_length: int,
-            target_column: str = 'Target'
+            target_column: str = 'Target',
+            device: str = 'cpu'  # Accept device
     ):
         self.sequence_length = sequence_length
+        self.device = device
 
         # 1. Identify Feature Columns
         self.feature_cols = [
@@ -41,20 +43,16 @@ class StockDataset(Dataset):
                and pd.api.types.is_numeric_dtype(features[col])
         ]
 
-        # 2. Sort to ensure time coherence
+        # 2. Sort
         df_sorted = features.sort_values(by=['Ticker', 'Date']).reset_index(drop=True)
 
-        # 3. Pre-allocate lists to hold the Tensors
-        # Converting to numpy first is much faster than iterating rows
+        # 3. Pre-allocate lists
         all_feats_list = []
         all_targets_list = []
 
-        # Group by Ticker to ensure we don't mix data from different stocks in one window
-        # (This part is still Python-loop heavy but only happens ONCE at startup)
         grouped = df_sorted.groupby('Ticker')
 
         for ticker, group in grouped:
-            # Extract numpy arrays for this ticker
             group_feats = group[self.feature_cols].values.astype(np.float32)
             group_targets = group[target_column].values.astype(np.float32)
 
@@ -62,45 +60,32 @@ class StockDataset(Dataset):
             if num_samples <= sequence_length:
                 continue
 
-            # Rolling window view (efficient numpy stride trick or simple loop)
-            # For clarity and safety, we'll use a loop, but append to lists
-            # We want input [t-seq : t] and target [t] (which is already shifted in data_collector)
-
-            # Vectorized sliding window creation is faster:
-            # Create indices:
-            # [[0, 1, ..., 9], [1, 2, ..., 10], ...]
-            # This consumes more RAM but is instant for training.
-
+            # Creating windows
             for i in range(sequence_length, num_samples + 1):
-                # Input: Window of length 'sequence_length' ending at i
-                # Target: The value at i-1 (since we already shifted target in Collector)
-                # But wait, your DataCollector shifts Target by -1.
-                # So row 'i' in the DF contains Features(t) and Target(t+1).
-                # We want the window to predict the target at the end.
-
-                # Slicing:
                 window_feats = group_feats[i - sequence_length: i]
-                # The target for this sequence is the target associated with the last step
                 target_val = group_targets[i - 1]
 
                 all_feats_list.append(window_feats)
                 all_targets_list.append(target_val)
 
-        # 4. Stack into one massive Tensor (The "RAM Cache")
-        # Shape: [Total_Samples, Seq_Len, Features]
         if len(all_feats_list) == 0:
-            raise ValueError("Not enough data to create sequences. Check sequence_length vs data size.")
+            raise ValueError("Not enough data to create sequences.")
 
-        self.X = torch.from_numpy(np.stack(all_feats_list))
-        self.y = torch.from_numpy(np.array(all_targets_list))
+        # 4. Stack and Move to Device IMMEDIATELY
+        # This is the "Pro Move". We send ~350MB to VRAM once.
+        self.X = torch.from_numpy(np.stack(all_feats_list)).to(self.device)
+        self.y = torch.from_numpy(np.array(all_targets_list)).to(self.device)
 
-        logger.info(f"Dataset loaded into RAM: X shape {self.X.shape}, y shape {self.y.shape}")
+        # Calculate memory usage in MB
+        mem_usage = (self.X.element_size() * self.X.nelement() + self.y.element_size() * self.y.nelement()) / (
+                    1024 * 1024)
+        logger.info(f"Dataset loaded to {self.device}. Usage: {mem_usage:.2f} MB")
 
     def __len__(self) -> int:
         return len(self.X)
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        # Zero overhead access
+        # Zero overhead access, data is already on GPU
         return self.X[idx], self.y[idx]
 
 
@@ -121,9 +106,10 @@ class DataModule:
         except FileNotFoundError:
             raise RuntimeError("Data files not found.")
 
-        self.train_dataset = StockDataset(train_data, self.config.sequence_length)
-        self.val_dataset = StockDataset(val_data, self.config.sequence_length)
-        self.test_dataset = StockDataset(test_data, self.config.sequence_length)
+        # Pass the device config down to the dataset
+        self.train_dataset = StockDataset(train_data, self.config.sequence_length, device=self.config.device)
+        self.val_dataset = StockDataset(val_data, self.config.sequence_length, device=self.config.device)
+        self.test_dataset = StockDataset(test_data, self.config.sequence_length, device=self.config.device)
 
     def get_dataloaders(self) -> Dict[str, DataLoader]:
         return {
@@ -131,10 +117,11 @@ class DataModule:
                 self.train_dataset,
                 batch_size=self.config.batch_size,
                 shuffle=self.config.train_shuffle,
-                num_workers=self.config.num_workers,
-                pin_memory=self.config.pin_memory,
-                persistent_workers=(self.config.num_workers > 0)  # Keeps workers alive
+                num_workers=0,  # MUST be 0 for GPU-resident data
+                pin_memory=False  # MUST be False for GPU-resident data
             ),
-            'val': DataLoader(self.val_dataset, batch_size=self.config.batch_size, shuffle=False),
-            'test': DataLoader(self.test_dataset, batch_size=self.config.batch_size, shuffle=False)
+            'val': DataLoader(self.val_dataset, batch_size=self.config.batch_size, shuffle=False, num_workers=0,
+                              pin_memory=False),
+            'test': DataLoader(self.test_dataset, batch_size=self.config.batch_size, shuffle=False, num_workers=0,
+                               pin_memory=False)
         }

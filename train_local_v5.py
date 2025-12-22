@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 def ensure_data_exists(config: dict) -> None:
-    """Ensure training data exists, create if not."""
     data_dir = Path(config['paths']['data'])
     if all((data_dir / f'{split}.parquet').exists() for split in ['train', 'validation', 'test']):
         return
@@ -24,11 +23,9 @@ def ensure_data_exists(config: dict) -> None:
     logger.info("Preparing training data...")
     data_dir.mkdir(parents=True, exist_ok=True)
 
-    # Generate synthetic data for testing
+    # ... (Synthetic data generation code remains the same) ...
     dates = pd.date_range(start='2020-01-01', end='2023-12-31', freq='D')
     n_samples = len(dates)
-
-    # Define a list of tickers
     tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']
     assigned_tickers = np.random.choice(tickers, size=n_samples)
 
@@ -47,26 +44,19 @@ def ensure_data_exists(config: dict) -> None:
         'ATR': np.abs(np.random.normal(0, 1, n_samples))
     })
 
-    # Introduce missing values randomly for testing
-    missing_rate = 0.01  # 1% missing data
+    missing_rate = 0.01
     num_missing = int(missing_rate * n_samples * len(data.columns))
     for _ in range(num_missing):
         idx = np.random.randint(0, n_samples)
         col = np.random.choice(data.columns.drop(['Date', 'Ticker', 'Label'], errors='ignore'))
         data.at[idx, col] = np.nan
 
-    # Add labels (1: Up, 2: Stable, 3: Down)
     returns = data['Close'].pct_change()
     data['Label'] = pd.qcut(returns, q=3, labels=[1, 2, 3]).fillna(2).astype(int)
 
-    # Drop rows with missing values and reset index
     data_clean = data.dropna().reset_index(drop=True)
-    logger.info(f"Dropped {len(data) - len(data_clean)} rows due to missing values.")
-
-    # Sort data by Ticker and Date
     data_clean = data_clean.sort_values(by=['Ticker', 'Date']).reset_index(drop=True)
 
-    # Split data
     train_cutoff = int(len(data_clean) * 0.7)
     val_cutoff = int(len(data_clean) * 0.85)
 
@@ -74,89 +64,78 @@ def ensure_data_exists(config: dict) -> None:
     val_data = data_clean[train_cutoff:val_cutoff]
     test_data = data_clean[val_cutoff:]
 
-    # Ensure there is enough data after cleaning
-    if len(train_data) == 0 or len(val_data) == 0 or len(test_data) == 0:
-        raise ValueError("Not enough data to create train/validation/test splits after cleaning.")
+    if len(train_data) == 0:
+        raise ValueError("Not enough data.")
 
-    # Scale features
     scaler = StandardScaler()
     feature_cols = [col for col in data.columns if col not in ['Date', 'Ticker', 'Label']]
     scaler.fit(train_data[feature_cols])
 
-    # Save splits
     for split, df in [('train', train_data), ('validation', val_data), ('test', test_data)]:
         df_scaled = df.copy()
         df_scaled[feature_cols] = scaler.transform(df[feature_cols])
         df_scaled.to_parquet(data_dir / f'{split}.parquet', index=False)
-        logger.info(f"Saved {split} data with {len(df_scaled)} samples")
 
 
 def train_local(config_path: str) -> dict:
     """Run complete training pipeline."""
-    # Load configuration
     with open(config_path) as f:
         config = yaml.safe_load(f)
 
-    # Set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logger.info(f"Using device: {device}")
 
-    # Ensure data exists
     ensure_data_exists(config)
 
-    # Setup experiment tracking
     experiment = ExperimentManager(config)
     logger.info(f"MLflow experiment: {config['mlflow']['experiment_name']}")
 
     try:
         with experiment, MemoryOptimizer():
-            # Initialize data module
+            # --- FIX: Pass 'device' to DataConfig ---
             data = DataModule(DataConfig(
                 batch_size=config['data']['batch_size'],
                 sequence_length=config['data']['window_size'],
                 num_workers=config['hardware']['num_workers'],
-                pin_memory=config['hardware']['pin_memory']
+                pin_memory=config['hardware']['pin_memory'],
+                device=str(device)  # <--- Critical: Tell dataset to load onto GPU
             ))
             data.setup(Path(config['paths']['data']))
 
-            # Retrieve dataloaders
             loaders = data.get_dataloaders()
             train_loader = loaders['train']
             val_loader = loaders['val']
             test_loader = loaders['test']
 
-            # Create model
+            feature_dim = len(data.train_dataset.feature_cols)
+
             model = KRNN(ModelConfig(
-                feature_dim=len(data.train_dataset.feature_cols),
+                feature_dim=feature_dim,
                 hidden_dim=config['model']['hidden_dim'],
                 num_layers=config['model']['num_layers'],
                 dropout=config['model']['dropout'],
                 device=str(device)
             )).to(device)
 
-            # Initialize predictor
             predictor = KRNNPredictor(model)
 
-            # Training loop
             best_val_loss = float('inf')
             patience_counter = 0
 
+            checkpoint_dir = Path(config['paths']['checkpoints'])
+            checkpoint_dir.mkdir(parents=True, exist_ok=True)
+
             for epoch in range(config['training']['epochs']):
-                # Train
                 train_metrics = predictor.train_epoch(train_loader)
                 experiment.log_metrics(train_metrics, step=epoch)
 
-                # Validate
                 val_metrics = predictor.validate(val_loader)
                 experiment.log_metrics(val_metrics, step=epoch)
 
-                # Early stopping
                 if val_metrics['loss'] < best_val_loss:
                     best_val_loss = val_metrics['loss']
                     patience_counter = 0
-                    predictor.save_checkpoint(
-                        Path(config['paths']['checkpoints']) / 'best_model.pt'
-                    )
+                    predictor.save_checkpoint(checkpoint_dir / 'best_model.pt')
                 else:
                     patience_counter += 1
                     if patience_counter >= config['training']['early_stop_patience']:
@@ -166,14 +145,11 @@ def train_local(config_path: str) -> dict:
                 logger.info(
                     f"Epoch {epoch}: train_loss={train_metrics['loss']:.4f}, "
                     f"val_loss={val_metrics['loss']:.4f}, "
-                    f"train_accuracy={train_metrics['accuracy']:.4f}, "
-                    f"val_accuracy={val_metrics['accuracy']:.4f}"
+                    f"train_accuracy={train_metrics['accuracy']:.4f}"
                 )
 
-            # Test final model
             test_metrics = predictor.validate(test_loader)
             experiment.log_metrics({'test_' + k: v for k, v in test_metrics.items()})
-            logger.info(f"Final test metrics: {test_metrics}")
             return test_metrics
 
     except Exception as e:
