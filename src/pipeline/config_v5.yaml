@@ -1,0 +1,94 @@
+# KRNN Rev. 5 Configuration - OVERFIT TEST
+
+# Model architecture
+model:
+  input_dim: 8              # Matches features_v5.py (8 stationary features)
+  hidden_dim: 256           # High capacity
+  num_layers: 3             # Deep network
+  dropout: 0.0              # CHANGED: 0.0 to allow overfitting/memorization
+  bidirectional: true
+
+# MLflow configuration
+mlflow:
+  tracking_uri: "mlruns"
+  experiment_name: "krnn_v5_local"
+  model_name: "krnn_stock_predictor"
+  artifact_store: "artifacts"
+  tags:
+    project: "stock_prediction"
+    version: "5.0_overfit"
+
+# Data processing
+data:
+  window_size: 60           # 60 days context
+  batch_size: 16            # CHANGED: Small batch size to add gradient noise and escape mean
+  features:
+    - RSI
+    - MACD
+    - BB_UPPER
+    - BB_LOWER
+    - ATR
+    - Volume_MA_5
+    - Volume_Change
+  target_columns:
+    - Open
+    - High
+    - Low
+    - Close
+  train_start: '2018-01-01'
+  train_end: '2023-01-01'
+  val_end: '2024-01-01'
+
+# Experiment tracking
+experiment:
+  name: "krnn_v5"
+  tracking_uri: "./mlruns"
+  artifact_dir: "./data/checkpoints"
+  memory_threshold: 0.85
+  gpu_threshold: 0.85
+  checkpoint_freq: 5
+
+# Training parameters
+training:
+  epochs: 100
+  learning_rate: 0.0005
+  early_stop_patience: 15
+  gradient_clip: 1.0
+  optimizer: "adam"
+  scheduler:
+    type: "reduce_on_plateau"
+    patience: 10
+    factor: 0.5
+  patience: 15
+  min_delta: 0.00001
+  scheduler_patience: 5
+  scheduler_factor: 0.5
+
+# Paths
+paths:
+  data: "./data"
+  checkpoints: "./data/checkpoints"
+  logs: "./logs"
+
+# Hardware
+hardware:
+  gpu: 0
+  num_workers: 0          # Set to 0 for Windows compatibility
+  pin_memory: true
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s [%(levelname)s] %(message)s"
+  log_dir: "logs"
+
+# Environment settings
+environment: "development"
+debug: true
+
+# Portfolio Settings
+portfolio:
+  top_n_assets: 10
+  risk_confidence: 0.95
+  n_simulations: 1000
+  target_return_factor: 0.8

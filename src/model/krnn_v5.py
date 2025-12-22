@@ -3,111 +3,23 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from typing import Tuple
-from dataclasses import dataclass
-
-# src/model/krnn_v5.py
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from typing import Tuple, Dict
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass
 class ModelConfig:
-    """Configuration for the Probabilistic K-Parallel RNN."""
-    input_dim: int
+    """Configuration for the KRNN Model."""
+    feature_dim: int  # Renamed from input_dim to match train_local_v5.py
     hidden_dim: int = 64
     num_layers: int = 2
     dropout: float = 0.2
-    k_dups: int = 3
-    # Output dim is 2 for Heteroscedastic Regression (Mu, Sigma)
-    output_dim: int = 2
+
+    # Added defaults because train_local_v5.py doesn't pass these
+    bidirectional: bool = True
+    num_classes: int = 3  # 1: Up, 2: Stable, 3: Down
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
-
-class KParallelEncoder(nn.Module):
-    """
-    The Core 'KRNN' Logic.
-    Creates K parallel RNNs and averages their outputs to reduce variance.
-    """
-
-    def __init__(self, config: ModelConfig):
-        super().__init__()
-        self.k_dups = config.k_dups
-        self.hidden_dim = config.hidden_dim
-        self.device = config.device
-
-        # Create K independent RNN instances
-        self.rnn_modules = nn.ModuleList()
-        for _ in range(self.k_dups):
-            self.rnn_modules.append(
-                nn.GRU(
-                    input_size=config.input_dim,
-                    hidden_size=config.hidden_dim,
-                    num_layers=config.num_layers,
-                    dropout=config.dropout if config.num_layers > 1 else 0,
-                    batch_first=True,
-                    bidirectional=False
-                )
-            )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Args:
-            x: [Batch, Seq_Len, Features]
-        Returns:
-            Averaged Hidden Representation [Batch, Hidden_Dim]
-        """
-        parallel_outputs = []
-
-        for rnn in self.rnn_modules:
-            out, _ = rnn(x)
-            # Take the output of the last time step
-            last_step_out = out[:, -1, :]  # [batch, hidden]
-            parallel_outputs.append(last_step_out)
-
-        # Stack and Mean Pool
-        stacked_outputs = torch.stack(parallel_outputs, dim=-1)
-        krnn_representation = torch.mean(stacked_outputs, dim=-1)
-
-        return krnn_representation
-
-
-class KRNNRegressor(nn.Module):
-    """
-    Probabilistic KRNN Regressor.
-    Predicts both Expected Return (Mu) and Volatility (Sigma).
-    """
-
-    def __init__(self, config: ModelConfig):
-        super().__init__()
-        self.config = config
-        self.encoder = KParallelEncoder(config)
-
-        # We need 2 outputs: Mu (Mean) and Sigma (Std Dev)
-        self.regressor = nn.Sequential(
-            nn.Dropout(config.dropout),
-            nn.Linear(config.hidden_dim, 2)
-        )
-        self.to(config.device)
-
-    def forward(self, x: torch.Tensor):
-        # 1. Encode
-        encoded = self.encoder(x)
-
-        # 2. Predict parameters
-        out = self.regressor(encoded)  # [Batch, 2]
-
-        # Split output
-        mu = out[:, 0]  # Predicted Mean Return
-        log_var = out[:, 1]  # Raw output for volatility
-
-        # Enforce positivity for Sigma using Softplus
-        # Add epsilon to prevent division by zero in loss function
-        sigma = F.softplus(log_var) + 1e-6
-
-        return mu, sigma
 
 class KRNN(nn.Module):
     """K-rare class nearest neighbor enhanced RNN."""
@@ -161,6 +73,8 @@ class KRNN(nn.Module):
         rnn_out, _ = self.rnn(x)
 
         # Self-attention
+        # Query: rnn_out, Key: rnn_out
+        # Score = Q @ K.T / sqrt(d)
         attention = F.softmax(
             torch.bmm(rnn_out, rnn_out.transpose(1, 2)) /
             torch.sqrt(torch.tensor(self.rnn_hidden, dtype=torch.float32, device=x.device)),
@@ -170,8 +84,8 @@ class KRNN(nn.Module):
         # Apply attention
         context = torch.bmm(attention, rnn_out)
 
-        # Classification
-        pooled = context[:, -1]  # Use last timestep
+        # Classification using the last timestep of the context
+        pooled = context[:, -1]
         pooled = self.dropout(pooled)
         logits = self.classifier(pooled)
 
@@ -192,7 +106,7 @@ class KRNNPredictor:
         self.model = model
         self.optimizer = torch.optim.AdamW(
             model.parameters(),
-            lr=model.config.learning_rate,
+            lr=1e-3,  # Default LR, usually driven by config but hardcoded in prev version
             weight_decay=0.01
         )
         self.scheduler = ReduceLROnPlateau(
@@ -200,11 +114,10 @@ class KRNNPredictor:
             mode='min',
             factor=0.5,
             patience=5
-            # Removed verbose=True to address deprecation warning
         )
         self.criterion = nn.CrossEntropyLoss()
 
-    def train_epoch(self, train_loader) -> dict:
+    def train_epoch(self, train_loader) -> Dict[str, float]:
         """Train for one epoch."""
         self.model.train()
         total_loss = 0
@@ -213,12 +126,20 @@ class KRNNPredictor:
 
         for batch_idx, (features, targets) in enumerate(train_loader):
             features = features.to(self.model.config.device)
-            targets = targets.to(self.model.config.device).squeeze(1)  # Squeeze target tensor
+            # targets from DataLoader might be [Batch, 1], need [Batch] for CrossEntropy
+            targets = targets.to(self.model.config.device).view(-1)
+
+            # Since targets are 1, 2, 3, we might need to shift to 0, 1, 2 for CrossEntropy
+            # Check if your data is 0-indexed or 1-indexed.
+            # Usually CrossEntropy expects 0..N-1.
+            # Assuming data is 1..3, we substract 1.
+            if targets.min() >= 1:
+                targets = targets - 1
 
             # Forward pass
             self.optimizer.zero_grad()
             logits, _ = self.model(features)
-            loss = self.criterion(logits, targets)
+            loss = self.criterion(logits, targets.long())
 
             # Backward pass
             loss.backward()
@@ -233,11 +154,11 @@ class KRNNPredictor:
 
         return {
             'loss': total_loss / len(train_loader),
-            'accuracy': correct / total
+            'accuracy': correct / total if total > 0 else 0
         }
 
     @torch.no_grad()
-    def validate(self, val_loader) -> dict:
+    def validate(self, val_loader) -> Dict[str, float]:
         """Run validation."""
         self.model.eval()
         total_loss = 0
@@ -246,11 +167,14 @@ class KRNNPredictor:
 
         for batch_idx, (features, targets) in enumerate(val_loader):
             features = features.to(self.model.config.device)
-            targets = targets.to(self.model.config.device).squeeze(1)  # Squeeze target tensor
+            targets = targets.to(self.model.config.device).view(-1)
+
+            if targets.min() >= 1:
+                targets = targets - 1
 
             # Forward pass
             logits, _ = self.model(features)
-            loss = self.criterion(logits, targets)
+            loss = self.criterion(logits, targets.long())
 
             # Track metrics
             total_loss += loss.item()
@@ -260,7 +184,7 @@ class KRNNPredictor:
 
         metrics = {
             'loss': total_loss / len(val_loader),
-            'accuracy': correct / total
+            'accuracy': correct / total if total > 0 else 0
         }
 
         self.scheduler.step(metrics['loss'])
