@@ -1,0 +1,14 @@
+artifact_uri: file:D:/PyCharmProjects/KRNN-G/mlruns/421806203722508828/10b73562b2a6452c8787dc9e8985875d/artifacts
+end_time: 1766443792438
+entry_point_name: ''
+experiment_id: '421806203722508828'
+lifecycle_stage: active
+run_id: 10b73562b2a6452c8787dc9e8985875d
+run_name: bright-panda-122
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766443701910
+status: 3
+tags: []
+user_id: JOSH
